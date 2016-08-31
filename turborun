@@ -1,0 +1,18 @@
+#!/bin/bash
+user=$(whoami)
+uid=$(id -u $user)
+gid=$(id -g $user)
+pw=12345678
+#command='initialize-graphics >/dev/null 2>/dev/null; useradd -G '$gid' -o -u '$uid' '$user'; mkdir -p /home/'$user'/.vnc; printf "'$pw'" |/opt/TurboVNC/bin/vncpasswd -f > /home/'$user'/.vnc/passwd; chmod 600 /home/'$user'/.vnc/passwd; chown -R '$user' /home/'$user'/.vnc; cp /data/.xinitrc /home/'$user'/; chown '$user' /home/'$user'/.xinitrc; chown '$user' /home/'$user'; runuser -l '$user' -c "/opt/TurboVNC/bin/vncserver -fg -autokill"'
+docker run \
+           --privileged \
+           --rm \
+           -v /home/$user/.ssh/authorized_keys:/authorized_keys:ro \
+           -p 5901:5901 \
+	   --name turbodocker \
+	   -v /home/$user:/home/$user/clusterhome\
+ 	   -e user=$user\
+	   -e uid=$uid \
+	   -e gid=$gid \
+	   -e pw=$pw\
+  	  turbodocker /bin/bash -c "/turboscript"
